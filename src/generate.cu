@@ -1,5 +1,3 @@
-#include "Square_Matrix.cu"
-#include "graph.cu"
 
 #include <algorithm>
 #include <bits/types/FILE.h>
@@ -9,6 +7,12 @@
 #include <random>
 #include <set>
 #include <unordered_map>
+
+typedef unsigned int Vertex;
+typedef unsigned long Weight;
+
+using namespace std;
+
 
 Vertex random_vertex(Vertex max)
 {
@@ -75,39 +79,7 @@ void SaveRandomGraphToFile(Vertex v, Vertex edges, string path)
     fclose(ptr);
 }
 
-Graph ReadGraphFromFile(string path, bool& success, bool isDirected = true)
-{
-    success=true;
-    FILE *ptr;
-    const char *c_path = path.c_str();
-    ptr = fopen(c_path, "r");
-    // if(ptr==NULL){
-    //     printf("Path does not exist");
-    //     return NULL;
-    // }
-    Vertex v, e;
-    fscanf(ptr, "%d %d", &v, &e);
-    // printf("%d %d",v,e);
-    Graph g;
-    if(!g.Allocate(v, true)){
-        success=false;
-        return g;
-    }
-    Vertex v1, v2;
-    Weight w;
-    while (e>0)
-    {
-        fscanf(ptr, "%d %d %lu", &v1, &v2, &w);
-        // printf("%d %d %lu",v1,v2,w);
-        g.Set_Edge(v1, v2, w);
-        if (!isDirected)
-        {
-            g.Set_Edge(v2, v1, w);
-        }
-        e--;
-    }
-    return g;
-}
+
 
 #include "CSR_matrix.cu"
 
