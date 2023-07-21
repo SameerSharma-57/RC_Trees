@@ -17,6 +17,23 @@ template <class T> void Print_array(const T *array, const int size)
     cout << endl;
 }
 
+
+
+
+template<class T>
+bool compareArr(T* a,T* b,Vertex size){
+    bool out=true;
+    for (int i = 0; i < size; i++)
+    {
+        if(a[i]!=b[i]){
+            out=false;
+            break;
+        }
+    }
+
+    return out;
+    
+}
 struct CSR_mat
 {
     Weight *nnz;

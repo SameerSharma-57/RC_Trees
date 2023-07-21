@@ -14,15 +14,38 @@ typedef unsigned long Weight;
 using namespace std;
 
 
-Vertex random_vertex(Vertex max)
+Vertex random_vertex(Vertex max, Vertex min=0)
 {
-    return (Vertex)(rand() / (double)(RAND_MAX) * (max));
+    return (min+(Vertex)(rand() / (double)(RAND_MAX) * (max-min)));
 }
 
 Weight random_weight(Weight w)
 {
     return 1 + (Weight)(rand() / (double)(RAND_MAX) * (w));
 }
+
+
+void SaveRandomTreeToFile(Vertex v,string path){
+    FILE *ptr;
+    Vertex edges = v-1;
+    const char *c_path=path.c_str();
+    ptr=fopen(c_path,"w");
+    fprintf(ptr,"%d %d\n",v,edges);
+    Vertex v1;
+    Vertex v2=1;
+    Weight w;
+
+
+    while(edges--){
+        v1=random_vertex(v2-1);
+        w=random_weight(1000);
+        fprintf(ptr,"%d %d %lu\n",v1,v2,w);
+        v2++;
+    }
+
+    fclose(ptr);
+    
+}   
 
 void SaveRandomGraphToFile(Vertex v, Vertex edges, string path)
 {

@@ -49,8 +49,23 @@ __global__ void Compute(const Vertex round,const Vertex*cct,const Vertex*idx,con
             if(d[idx[i]]==0){
 
                 n_neighbours++;
-                if(l[idx[i]]==1){
-                    d[idx[i]]=round;
+                if(l[idx[i]]){
+                    if((l[tid])){
+
+                        if(tid<idx[i]){
+
+                            d[tid]=round+1;
+                            d[idx[i]]=round;
+                        }
+
+                        else{
+                            d[tid]=round;
+                            d[idx[i]]=round+1;
+                        }
+                    }
+                    else{
+                        d[idx[i]]=round;
+                    }
                     *update=true;
                     break;
                 }
@@ -58,10 +73,6 @@ __global__ void Compute(const Vertex round,const Vertex*cct,const Vertex*idx,con
             }
         }
 
-        if(n_neighbours==0){
-            d[tid]=round;
-            *update=true;
-        }
         
     }
 

@@ -1,25 +1,21 @@
 #include <cstdio>   
 
 #include "rake.cu"
-
+#include "rake_cpu.cpp"
 #include "generate.cu"
 
-template<class T>
-void printArr(T* arr,Vertex size){
-    for (int i = 0; i < size; i++)
-    {
-        cout<<arr[i]<<" ";
-    }
-    cout<<endl;
-    
-}
+
+
 
 
 int main(){
 
 
-    string input_file = "/home/sameer/RC_trees/Graphs/graph_2.txt";
+    string input_file = "/home/sameer/RC_trees/Graphs/graph_3.txt";
     freopen("/home/sameer/RC_trees/Graphs/graph_output.txt","w",stdout);
+
+    // string output_file = "/home/sameer/RC_trees/Graphs/graphs_3.txt";
+    // SaveRandomTreeToFile(1e7,output_file);
    
    CSR_mat g_sparse =
         ReadSparseGraph(input_file, false);
@@ -38,12 +34,19 @@ int main(){
                sizeof(Vertex) * (vertices + 1), cudaMemcpyHostToDevice);
 
 
-    printArr(g_sparse.nnz,2*edges);
+    
 
-    Vertex *d;
-    d = GenerateCompressedGraph(g_parallel_sparse);
+    Vertex *d_gpu;
+    Vertex *d_cpu;
+    d_cpu = generateCompressedGraph(g_sparse);
+    d_gpu = GenerateCompressedGraph(g_parallel_sparse);
 
-    printArr(d,vertices);
+
+
+    cout<<"are results same: "<<compareArr(d_cpu,d_gpu,vertices)<<endl;
+    // Print_array(d_cpu,vertices);
+    // Print_array(d_gpu,vertices);
+
     
 
     return 0;
