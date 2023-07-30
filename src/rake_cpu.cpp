@@ -75,7 +75,7 @@ Vertex* generateCompressedGraph(const CSR_mat g){
 
     Vertex round=1;
     while(*update){
-        cout<<round<<endl;
+        
         *update=false;
         getLeaf(g, l, d);
         // Print_array(d,vertices);

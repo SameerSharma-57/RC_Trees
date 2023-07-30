@@ -120,6 +120,10 @@ Vertex *GenerateCompressedGraph(const CSR_mat g){
 
 
     cudaMemcpy(d_host, d_gpu, sizeof(Vertex)*vertices, cudaMemcpyDeviceToHost);
+
+    cudaFree(d_gpu);
+    cudaFree(l_gpu);
+    cudaFree(update_gpu);
    
     return d_host;
 
