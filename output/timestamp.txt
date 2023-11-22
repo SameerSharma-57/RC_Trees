@@ -1,0 +1,6 @@
+No of vertices 100000 No of edges 99999
+Time is given in milliseconds
+Time required to mark leaf vertices 0.0256
+Time requried to rake vertices 0
+Time requried to mark compressable vertices 0
+Time required to compress vertices 0

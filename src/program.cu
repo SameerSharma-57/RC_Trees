@@ -1,11 +1,12 @@
-#include <cstdio>
-#include <iostream>
+#include "CSR_matrix.cu"
 #include "Cpu_timer.cpp"
 #include "Cuda_timer.cu"
 #include "generate.cu"
 #include "rake.cu"
 #include "rake_cpu.cpp"
 #include <argp.h>
+#include <cstdio>
+#include <iostream>
 
 struct arguments
 {
@@ -61,7 +62,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
         argument->args[state->arg_num] = arg;
         break;
     default:
-    
+
         return ARGP_ERR_UNKNOWN;
     }
     return 0;
@@ -69,7 +70,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 
 static struct argp argp = {options, parse_opt, 0, 0};
 
-int main(int argc,char **argv)
+int main(int argc, char **argv)
 {
 
     struct arguments arguments;
@@ -80,10 +81,6 @@ int main(int argc,char **argv)
     arguments.input_file = "";
     arguments.output_file = "";
     arguments.mode = 0;
-
-   
-    
-
     argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
     if (arguments.input_file == "" || arguments.output_file == "")
@@ -102,7 +99,7 @@ int main(int argc,char **argv)
         cout << "Tree generation completed" << endl;
     }
 
-    if (arguments.mode == 1)
+    if(arguments.mode!=0)
     {
 
         CPU_timer cpu_timer;
@@ -125,24 +122,33 @@ int main(int argc,char **argv)
         cudaMemcpy(g_parallel_sparse.cct, g_sparse.cct,
                    sizeof(Vertex) * (vertices + 1), cudaMemcpyHostToDevice);
 
-        Vertex *d_gpu;
-        Vertex *d_cpu;
+        if (arguments.mode == 1)
+        {
+            Vertex *d_gpu;
+            Vertex *d_cpu;
 
-        cpu_timer.start();
-        d_cpu = generateCompressedGraph(g_sparse);
-        cpu_timer.stop();
+            cpu_timer.start();
+            d_cpu = generateCompressedGraph(g_sparse);
+            cpu_timer.stop();
 
-        cuda_timer.start();
-        d_gpu = GenerateCompressedGraph(g_parallel_sparse);
-        cudaDeviceSynchronize();
-        cuda_timer.stop();
+            cuda_timer.start();
+            d_gpu = GenerateCompressedGraph(g_parallel_sparse);
+            cudaDeviceSynchronize();
+            cuda_timer.stop();
 
-        cout << "are results same: " << compareArr(d_cpu, d_gpu, vertices)
-             << endl;
-        cout << "time taken by sequential algorithm " << cpu_timer.time_elapsed()
-             << endl;
-        cout << "time taken by parallel algorithm " << cuda_timer.time_elapsed()
-             << endl;
+            cout << "are results same: " << compareArr(d_cpu, d_gpu, vertices)
+                 << endl;
+            cout << "time taken by sequential algorithm "
+                 << cpu_timer.time_elapsed() << endl;
+            cout << "time taken by parallel algorithm "
+                 << cuda_timer.time_elapsed() << endl;
+        }
+
+        else if(arguments.mode==2){
+            int* l;
+            l = getDegree(g_parallel_sparse);
+            Print_array(l, g_parallel_sparse.Get_Vertex_count());
+        }
         // Print_array(d_cpu,vertices);
         // Print_array(d_gpu,vertices);
 

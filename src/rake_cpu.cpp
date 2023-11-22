@@ -2,12 +2,14 @@
 
 #include "CSR_matrix.cu"
 #include <cstring>
+#include <omp.h>
 
 void getLeaf(const CSR_mat g,bool* l,Vertex* d){
 
-    int n_neighbours=0;
+    #pragma omp parallel for
     for (int i = 0; i < g.Get_Vertex_count(); i++)
     {
+        int n_neighbours=0;
         if(d[i]==0){
             n_neighbours=0;
             for (int j = g.cct[i]; j < g.cct[i+1]; j++)
@@ -19,7 +21,6 @@ void getLeaf(const CSR_mat g,bool* l,Vertex* d){
                     }
                 }
             }
-
             l[i] = (n_neighbours==1);
         }
         
@@ -29,10 +30,10 @@ void getLeaf(const CSR_mat g,bool* l,Vertex* d){
 
 
 void Compute(const Vertex round,const CSR_mat g,const bool*l,Vertex*d, bool*update){
-    
-    int n_neighbours=0;
+    #pragma omp parallel for
     for (int i = 0; i < g.Get_Vertex_count(); i++)
     {
+        int n_neighbours=0;
         if(d[i]==0){
             n_neighbours=0;
             for (int j = g.cct[i]; j < g.cct[i+1]; j++)

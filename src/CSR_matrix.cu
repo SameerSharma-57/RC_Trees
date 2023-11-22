@@ -17,22 +17,19 @@ template <class T> void Print_array(const T *array, const int size)
     cout << endl;
 }
 
-
-
-
-template<class T>
-bool compareArr(T* a,T* b,Vertex size){
-    bool out=true;
+template <class T> bool compareArr(T *a, T *b, Vertex size)
+{
+    bool out = true;
     for (int i = 0; i < size; i++)
     {
-        if(a[i]!=b[i]){
-            out=false;
+        if (a[i] != b[i])
+        {
+            out = false;
             break;
         }
     }
 
     return out;
-    
 }
 struct CSR_mat
 {
@@ -45,13 +42,9 @@ struct CSR_mat
 
     bool OnCPU;
 
-    Vertex Get_Vertex_count()const{
-        return vertex_count;
+    Vertex Get_Vertex_count() const { return vertex_count; }
+    Vertex Get_edge_count() const { return edge_count; }
 
-    }
-    Vertex Get_edge_count()const{
-        return edge_count;
-    }
     void Allocate(const Vertex n_vertices, const Vertex n_edges,
                   bool cpu = true)
     {
@@ -110,15 +103,77 @@ struct CSR_mat
         }
     }
 
+    void print_mat()
+    {
+        if (OnCPU)
+        {
 
-
-    void print_mat(){
-        Print_array(nnz,2*edge_count);
-        cout<<endl;
-        Print_array(idx, 2*edge_count);cout<<endl;
-        Print_array(cct, vertex_count+1);cout<<endl;
-
+            Print_array(nnz, 2 * edge_count);
+            cout << endl;
+            Print_array(idx, 2 * edge_count);
+            cout << endl;
+            Print_array(cct, vertex_count + 1);
+            cout << endl;
+        }
+        else
+        {
+            cout << "Matrix is allocated in GPU" << endl;
+        }
     }
 };
+
+void copy_csr_mat(CSR_mat &curr, CSR_mat &copy, bool changeHost = false)
+{
+    const Vertex edges = curr.Get_Vertex_count();
+    const Vertex v = curr.Get_edge_count();
+   
+    if (!curr.OnCPU)
+    {
+        if (!changeHost)
+        {
+            copy.Allocate(curr.Get_Vertex_count(), curr.Get_edge_count(), false);
+
+            cudaMemcpy(copy.nnz, curr.nnz, sizeof(Weight) * 2 * edges,
+                       cudaMemcpyDeviceToDevice);
+            cudaMemcpy(copy.idx, curr.idx, sizeof(Vertex) * 2 * edges,
+                       cudaMemcpyDeviceToDevice);
+            cudaMemcpy(copy.cct, curr.cct, sizeof(Vertex) * (v + 1),
+                       cudaMemcpyDeviceToDevice);
+        }
+        else
+        {
+            copy.Allocate(curr.Get_Vertex_count(), curr.Get_edge_count(), true);
+
+            cudaMemcpy(copy.nnz, curr.nnz, sizeof(Weight) * 2 * edges,
+                       cudaMemcpyDeviceToHost);
+            cudaMemcpy(copy.idx, curr.idx, sizeof(Vertex) * 2 * edges,
+                       cudaMemcpyDeviceToHost);
+            cudaMemcpy(copy.cct, curr.cct, sizeof(Vertex) * (v + 1),
+                       cudaMemcpyDeviceToHost);
+        }
+    }
+    else
+    {
+        if (!changeHost)
+        {
+            copy.Allocate(curr.Get_Vertex_count(), curr.Get_edge_count(), true);
+
+            memcpy(copy.nnz, curr.nnz, sizeof(Weight) * 2 * edges);
+            memcpy(copy.idx, curr.idx, sizeof(Vertex) * 2 * edges);
+            memcpy(copy.cct, curr.cct, sizeof(Vertex) * (v + 1));
+        }
+        else
+        {
+            copy.Allocate(curr.Get_Vertex_count(), curr.Get_edge_count(), false);
+
+            cudaMemcpy(copy.nnz, curr.nnz, sizeof(Weight) * 2 * edges,
+                       cudaMemcpyHostToDevice);
+            cudaMemcpy(copy.idx, curr.idx, sizeof(Vertex) * 2 * edges,
+                       cudaMemcpyHostToDevice);
+            cudaMemcpy(copy.cct, curr.cct, sizeof(Vertex) * (v + 1),
+                       cudaMemcpyHostToDevice);
+        }
+    }
+}
 
 #endif

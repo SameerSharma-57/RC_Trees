@@ -104,6 +104,7 @@ void SaveRandomGraphToFile(Vertex v, Vertex edges, string path)
 
 
 
+
 #include "CSR_matrix.cu"
 
 struct Edge

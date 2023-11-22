@@ -1,0 +1,25 @@
+
+<--------------------------------------------------- 1e7 --------------------------------------------------->
+No of vertices 10000000 No of edges 9999999
+Time is given in milliseconds
+Time required to mark leaf vertices 2.03571
+Time requried to rake vertices 0
+Time requried to mark compressable vertices 756.336
+Time required to compress vertices 3.19302
+
+<--------------------------------------------------- 1e6 --------------------------------------------------->
+No of vertices 1000000 No of edges 999999
+Time is given in milliseconds
+Time required to mark leaf vertices 0.088064
+Time requried to rake vertices 0
+Time requried to mark compressable vertices 27.8969
+Time required to compress vertices 0
+
+<--------------------------------------------------- 1e5 --------------------------------------------------->
+No of vertices 100000 No of edges 99999
+Time is given in milliseconds
+Time required to mark leaf vertices 0.0256
+Time requried to rake vertices 0.000004
+Time requried to mark compressable vertices 8.34
+Time required to compress vertices 0
+
