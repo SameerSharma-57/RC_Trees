@@ -1,0 +1,1 @@
+Currently Compress operation is not implemented fully parallely. We are using the concept of Max-Ind set to mark the compressible vertices. In temp.cu, I have a sequential code to mark to vertices. So one may integrate this into main code to see its working.
