@@ -4,6 +4,8 @@
 #include "generate.cu"
 #include "rake.cu"
 #include "rake_cpu.cpp"
+#include "rake_compress2.cu"
+#include "compress2.cu"
 #include <argp.h>
 #include <cstdio>
 #include <iostream>
@@ -127,27 +129,18 @@ int main(int argc, char **argv)
             Vertex *d_gpu;
             Vertex *d_cpu;
 
-            cpu_timer.start();
-            d_cpu = generateCompressedGraph(g_sparse);
-            cpu_timer.stop();
 
             cuda_timer.start();
             d_gpu = GenerateCompressedGraph(g_parallel_sparse);
             cudaDeviceSynchronize();
             cuda_timer.stop();
 
-            cout << "are results same: " << compareArr(d_cpu, d_gpu, vertices)
-                 << endl;
-            cout << "time taken by sequential algorithm "
-                 << cpu_timer.time_elapsed() << endl;
             cout << "time taken by parallel algorithm "
                  << cuda_timer.time_elapsed() << endl;
         }
 
         else if(arguments.mode==2){
-            int* l;
-            l = getDegree(g_parallel_sparse);
-            Print_array(l, g_parallel_sparse.Get_Vertex_count());
+            // compress_2(g_parallel_sparse,0);
         }
         // Print_array(d_cpu,vertices);
         // Print_array(d_gpu,vertices);

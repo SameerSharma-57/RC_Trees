@@ -122,7 +122,7 @@ struct CSR_mat
     }
 };
 
-void copy_csr_mat(CSR_mat &curr, CSR_mat &copy, bool changeHost = false)
+void copy_csr_mat(const CSR_mat &curr, CSR_mat &copy, bool changeHost = false)
 {
     const Vertex edges = curr.Get_Vertex_count();
     const Vertex v = curr.Get_edge_count();
